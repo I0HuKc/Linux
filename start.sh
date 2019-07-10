@@ -1,8 +1,10 @@
 #!/bin/bash
-#Version: for Kali Linux
+#Version: 2.0 for Kali Linux
 #Date: 05.07.2019
 #Author: Egor Sobolev
 #Disclaimer: Editing author will not make you the real coder )
+
+#chmod +x start.sh
 
 SETCOLOR_SUCCESS="echo -en \\033[1;32m"
 SETCOLOR_FAILURE="echo -en \\033[1;31m"
@@ -24,26 +26,50 @@ checkStatus() {
   fi
 }
 
-echo "Включение TOR..."
-service tor start
-checkStatus
-
-echo "Включение Proxy..."
-service privoxy start
-checkStatus
-
-echo "TOR и Proxy включены"
-echo " "
-
 #проверяю обновления | обновляюсь
-apt-get update #всместо apt-get пропитсать команду обновления для своего дистрибутива
+echo "\033[93mПроверка обновлений...\033[00m"
+apt-get update
 checkStatus
+
+echo "\033[93mУстановка обновлений...\033[00m"
 apt-get upgrade
 checkStatus
+
 apt-get dist-upgrade
 checkStatus
+echo "\033[93mОчистка обновлений...\033[00m"
 apt-get autoclean
+apt autoremove
 checkStatus
 
+
+
+read -p 'Включать TOR и Proxy? [Y/n] ' fistQ
+case $fistQ in
+  y|Y)
+    echo "Включение TOR..."
+    service tor start
+    checkStatus
+
+    echo "Включение Proxy..."
+    service privoxy start
+    checkStatus
+
+    echo "TOR и Proxy включены"
+    echo " "
+    ;;
+  n|N)
+
+    ;;
+  *)
+    echo "Использована неверная команда..."
+    ;;
+esac
+
+
+alias python='/usr/bin/python3.7'
+. ~/.bashrc
 clear
-echo "Хозяин, всё сделано"
+python --version
+
+echo "\033[92mХозяин, все сделано\033[00m"
