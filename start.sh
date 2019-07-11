@@ -1,5 +1,5 @@
 #!/bin/bash
-#Version: 2.0 for Kali Linux
+#Version: 2.1 for Kali Linux
 #Date: 05.07.2019
 #Author: Egor Sobolev
 #Disclaimer: Editing author will not make you the real coder )
@@ -66,10 +66,5 @@ case $fistQ in
     ;;
 esac
 
-
-alias python='/usr/bin/python3.7'
-. ~/.bashrc
 clear
-python --version
-
 echo "\033[92mХозяин, все сделано\033[00m"
