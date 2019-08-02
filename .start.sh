@@ -1,5 +1,5 @@
 #!/bin/bash
-#Version: 2.1 for Kali Linux
+#Version: 2.2 for Kali Linux
 #Date: 05.07.2019
 #Author: Egor Sobolev
 #Disclaimer: Editing author will not make you the real coder )
@@ -40,6 +40,10 @@ checkStatus
 echo "\033[93mОчистка обновлений...\033[00m"
 apt-get autoclean
 apt autoremove
+checkStatus
+# Блокировка icmp пакетов
+echo "\033[93Включаю блокировку ICMP запросов...\033[00m"
+iptablas -I OUTPUT -p icmp -j DROP
 checkStatus
 
 
