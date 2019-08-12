@@ -1,5 +1,5 @@
 #!/bin/bash
-#Version: 2.2 for Kali Linux
+#Version: 2.3 for Debian
 #Date: 05.07.2019
 #Author: Egor Sobolev
 #Disclaimer: Editing author will not make you the real coder )
@@ -26,22 +26,22 @@ checkStatus() {
 
 #проверяю обновления | обновляюсь
 echo "\033[93mПроверка обновлений...\033[00m"
-apt-get update
+sudo apt-get update
 checkStatus
 
 echo "\033[93mОтключение Sophos...\033[00m"
-/opt/sophos-av/bin/savdctl disableOnBoot savd
+sudo /opt/sophos-av/bin/savdctl disableOnBoot savd
 checkStatus
 
 echo "\033[93mУстановка обновлений...\033[00m"
-apt-get upgrade
+sudo apt-get upgrade
 checkStatus
 
-apt-get dist-upgrade
+sudo apt-get dist-upgrade
 checkStatus
 echo "\033[93mОчистка обновлений...\033[00m"
-apt-get autoclean
-apt autoremove
+sudo apt-get autoclean
+sudo apt autoremove
 checkStatus
 
 # Блокировка icmp пакетов
@@ -72,7 +72,7 @@ case $fistQ in
 esac
 
 echo "\033[92mВключение Sophos...\033[00m"
-/opt/sophos-av/bin/savdctl enableOnBoot savd
+sudo /opt/sophos-av/bin/savdctl enableOnBoot savd
 checkStatus
 
 clear
