@@ -1,5 +1,5 @@
 #!/bin/bash
-#Version: 2.3 for Debian
+#Version: 2.4 for Debian
 #Date: 05.07.2019
 #Author: Egor Sobolev
 #Disclaimer: Editing author will not make you the real coder )
@@ -24,56 +24,66 @@ checkStatus() {
   fi
 }
 
+standartUpdate(){
+    echo "\033[93mУстановка обновлений...\033[00m"
+    apt-get upgrade
+    checkStatus
+
+    apt-get dist-upgrade
+    checkStatus
+    echo "\033[93mОчистка обновлений...\033[00m"
+    apt-get autoclean
+    apt autoremove
+    checkStatus
+}
+
+securitySettings(){
+    # Блокировка icmp пакетов
+    echo "\033[93mВключаю блокировку ICMP запросов...\033[00m"
+    iptables -I OUTPUT -p icmp -j DROP
+    checkStatus
+
+    read -p 'Включать TOR и Proxy? [Y/n] ' fistQ
+    case $fistQ in
+      y|Y)
+        echo "Включение TOR..."
+        service tor start
+        checkStatus
+
+        echo "Включение Proxy..."
+        service privoxy start
+        checkStatus
+
+        echo "TOR и Proxy включены"
+        echo " "
+        ;;
+      n|N)
+        ;;
+      *)
+        echo "Использована неверная команда..."
+        ;;
+    esac
+
+}
+
 #проверяю обновления | обновляюсь
 echo "\033[93mПроверка обновлений...\033[00m"
-sudo apt-get update
+apt-get update
 checkStatus
 
-echo "\033[93mОтключение Sophos...\033[00m"
-sudo /opt/sophos-av/bin/savdctl disableOnBoot savd
-checkStatus
-
-echo "\033[93mУстановка обновлений...\033[00m"
-sudo apt-get upgrade
-checkStatus
-
-sudo apt-get dist-upgrade
-checkStatus
-echo "\033[93mОчистка обновлений...\033[00m"
-sudo apt-get autoclean
-sudo apt autoremove
-checkStatus
-
-# Блокировка icmp пакетов
-echo "\033[93mВключаю блокировку ICMP запросов...\033[00m"
-iptablas -I OUTPUT -p icmp -j DROP
-checkStatus
-
-read -p 'Включать TOR и Proxy? [Y/n] ' fistQ
-case $fistQ in
-  y|Y)
-    echo "Включение TOR..."
-    service tor start
+{ # если антивирус Sophos установлен >>
+    echo "\033[93mОтключение Sophos...\033[00m"
+    /opt/sophos-av/bin/savdctl disableOnBoot savd
     checkStatus
-
-    echo "Включение Proxy..."
-    service privoxy start
+    standartUpdate
+    securitySettings
+    echo "\033[92mВключение Sophos...\033[00m"
+    /opt/sophos-av/bin/savdctl enableOnBoot savd
     checkStatus
-
-    echo "TOR и Proxy включены"
-    echo " "
-    ;;
-  n|N)
-
-    ;;
-  *)
-    echo "Использована неверная команда..."
-    ;;
-esac
-
-echo "\033[92mВключение Sophos...\033[00m"
-sudo /opt/sophos-av/bin/savdctl enableOnBoot savd
-checkStatus
+}||{ # если антивирус Sophos не установлен >>
+    standartUpdate
+    securitySettings
+}
 
 clear
 echo "\033[92mХозяин, все сделано\033[00m"
